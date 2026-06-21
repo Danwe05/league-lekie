@@ -15,7 +15,8 @@ export function calculateStandings(clubs: Club[], matches: Match[]): StandingRow
       goalsFor: 0,
       goalsAgainst: 0,
       goalDifference: 0,
-      points: 0
+      points: 0,
+      form: []
     });
   });
 
@@ -42,21 +43,31 @@ export function calculateStandings(clubs: Club[], matches: Match[]): StandingRow
 
     if (match.homeScore > match.awayScore) {
       home.won += 1;
-      away.lost += 1;
       home.points += 3;
+      home.form?.push('W');
+      away.lost += 1;
+      away.form?.push('L');
     } else if (match.homeScore < match.awayScore) {
       away.won += 1;
-      home.lost += 1;
       away.points += 3;
+      away.form?.push('W');
+      home.lost += 1;
+      home.form?.push('L');
     } else {
       home.drawn += 1;
-      away.drawn += 1;
       home.points += 1;
+      home.form?.push('D');
+      away.drawn += 1;
       away.points += 1;
+      away.form?.push('D');
     }
   });
 
-  const sortedStandings = Array.from(standingsMap.values()).sort((a, b) => {
+  const sortedStandings = Array.from(standingsMap.values()).map(row => {
+    // Keep only the most recent 5 matches
+    row.form = row.form?.slice(-5) || [];
+    return row;
+  }).sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
     if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
     return b.goalsFor - a.goalsFor;

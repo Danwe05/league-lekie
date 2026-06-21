@@ -3,9 +3,11 @@ import { createClient } from '@/lib/supabase-server'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { PlayerFormDialog, DeletePlayerButton } from '@/components/admin/PlayerActions'
+import { CSVUploadDialog } from '@/components/admin/CSVUploadDialog'
 import { SearchInput } from '@/components/admin/SearchInput'
 import { Pagination } from '@/components/admin/Pagination'
-import { UserSquare } from 'lucide-react'
+import { UserSquare, ExternalLink } from 'lucide-react'
+import Link from 'next/link'
 
 const PAGE_SIZE = 15
 
@@ -60,7 +62,10 @@ export default async function AdminJoueursPage({
           </h1>
           <p className="text-muted-foreground text-sm">Effectifs de tous les clubs.</p>
         </div>
-        <PlayerFormDialog clubs={clubs} />
+        <div className="flex items-center gap-2">
+          <CSVUploadDialog />
+          <PlayerFormDialog clubs={clubs} />
+        </div>
       </div>
 
       {/* Search */}
@@ -73,6 +78,7 @@ export default async function AdminJoueursPage({
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="w-12">#</TableHead>
+              <TableHead className="w-16">Photo</TableHead>
               <TableHead>Joueur</TableHead>
               <TableHead>Club</TableHead>
               <TableHead>Poste</TableHead>
@@ -84,6 +90,15 @@ export default async function AdminJoueursPage({
             {players.map(player => (
               <TableRow key={player.id}>
                 <TableCell className="font-bold text-muted-foreground">{player.number}</TableCell>
+                <TableCell>
+                  {player.photoUrl ? (
+                    <img src={player.photoUrl} alt="Photo" className="w-8 h-8 rounded-full object-cover border border-border" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border border-border">
+                      <UserSquare className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell className="font-medium">{player.name}</TableCell>
                 <TableCell className="text-muted-foreground text-sm">{player.clubName}</TableCell>
                 <TableCell>
@@ -92,7 +107,15 @@ export default async function AdminJoueursPage({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">{player.season}</TableCell>
-                <TableCell className="text-right space-x-1">
+                <TableCell className="text-right space-x-1 flex items-center justify-end">
+                  <Link 
+                    href={`/joueurs/${player.id}`} 
+                    target="_blank" 
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-9 w-9"
+                    title="Voir Profil Public"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </Link>
                   <PlayerFormDialog player={player} clubs={clubs} />
                   <DeletePlayerButton id={player.id} />
                 </TableCell>
@@ -100,7 +123,7 @@ export default async function AdminJoueursPage({
             ))}
             {players.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
                   {q ? `Aucun joueur pour « ${q} ».` : 'Aucun joueur enregistré.'}
                 </TableCell>
               </TableRow>

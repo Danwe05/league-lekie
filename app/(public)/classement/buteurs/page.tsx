@@ -1,6 +1,8 @@
 import { getTopScorers, getSeasons } from '@/lib/api'
 import { SeasonSelector } from '@/components/SeasonSelector'
-import { Medal } from 'lucide-react'
+import { Medal, Trophy } from 'lucide-react'
+import { StandingsNav } from '@/components/StandingsNav'
+import Link from 'next/link'
 
 export default async function ButeursPage({
   searchParams,
@@ -16,10 +18,18 @@ export default async function ButeursPage({
   return (
     <div className="container mx-auto px-4 py-12 flex-1">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
-        <h1 className="font-heading font-bold text-4xl uppercase tracking-tighter border-b-4 border-primary inline-block pb-2">
-          Classement Buteurs
-        </h1>
-        <SeasonSelector seasons={seasons} currentSeason={season} />
+        <div>
+          <h1 className="font-heading font-bold text-4xl uppercase tracking-tighter border-b-4 border-primary inline-block pb-2 mb-2">
+            <span className="flex items-center gap-2">
+              <Trophy className="w-8 h-8 text-primary" /> Buteurs
+            </span>
+          </h1>
+          <p className="text-muted-foreground mt-2">Le classement officiel des meilleurs buteurs de la ligue.</p>
+        </div>
+        <div className="flex flex-col gap-4 items-end">
+          <StandingsNav season={season} />
+          <SeasonSelector seasons={seasons} currentSeason={season} />
+        </div>
       </div>
 
       {topScorers.length === 0 ? (
@@ -51,7 +61,11 @@ export default async function ButeursPage({
                       <span className="font-bold text-muted-foreground">{idx + 1}</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 font-bold text-foreground">{scorer.playerName}</td>
+                  <td className="py-4 font-bold text-base">
+                  <Link href={`/joueurs/${scorer.playerId}`} className="hover:text-primary hover:underline transition-colors">
+                    {scorer.playerName}
+                  </Link>
+                </td>
                   <td className="px-4 py-3 text-muted-foreground">{scorer.clubName}</td>
                   <td className="px-4 py-3 text-center">
                     <span className="font-heading font-bold text-2xl text-primary">{scorer.goals}</span>

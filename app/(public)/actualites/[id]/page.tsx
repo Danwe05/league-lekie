@@ -1,7 +1,8 @@
 import { getActualiteById, getActualites } from '@/lib/api'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, CalendarDays } from 'lucide-react'
-import Link from 'next/link'
+import { CalendarDays } from 'lucide-react'
+import { Breadcrumbs } from '@/components/Breadcrumbs'
+import { ShareButton } from '@/components/ShareButton'
 import type { Metadata } from 'next'
 
 export async function generateStaticParams() {
@@ -39,11 +40,12 @@ export default async function ActualiteDetailPage({ params }: { params: Promise<
 
   return (
     <div className="container mx-auto px-4 py-12 flex-1 max-w-3xl">
-      <Link href="/actualites" className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary mb-8 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Toutes les actualités
-      </Link>
+      <div className="flex items-center justify-between gap-4">
+        <Breadcrumbs items={[{ label: 'Actualités', href: '/actualites' }, { label: article.title }]} />
+        <ShareButton title={article.title} text={article.content.substring(0, 100) + '...'} />
+      </div>
 
-      <article>
+      <article className="mt-4">
         {article.imageUrl && (
           <div className="w-full h-64 md:h-80 rounded-xl overflow-hidden mb-8 border border-border">
             <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover" />

@@ -89,7 +89,8 @@ export function RealtimeStandings({ initialMatches, initialClubs, maxRows }: Pro
             <th className="text-center py-2 w-8">G</th>
             <th className="text-center py-2 w-8">N</th>
             <th className="text-center py-2 w-8">P</th>
-            <th className="text-center py-2 w-12">DB</th>
+            <th className="text-center py-2 w-12 hidden md:table-cell">DB</th>
+            <th className="text-center py-2 min-w-[80px]">Forme</th>
             <th className="text-center py-2 font-bold text-foreground w-12">Pts</th>
           </tr>
         </thead>
@@ -102,7 +103,23 @@ export function RealtimeStandings({ initialMatches, initialClubs, maxRows }: Pro
               <td className="py-2 text-center text-muted-foreground">{row.won}</td>
               <td className="py-2 text-center text-muted-foreground">{row.drawn}</td>
               <td className="py-2 text-center text-muted-foreground">{row.lost}</td>
-              <td className="py-2 text-center text-muted-foreground">{row.goalDifference > 0 ? `+${row.goalDifference}` : row.goalDifference}</td>
+              <td className="py-2 text-center text-muted-foreground hidden md:table-cell">{row.goalDifference > 0 ? `+${row.goalDifference}` : row.goalDifference}</td>
+              <td className="py-2">
+                <div className="flex items-center justify-center gap-1">
+                  {(row.form || []).map((res, i) => (
+                    <span 
+                      key={i} 
+                      title={res === 'W' ? 'Victoire' : res === 'D' ? 'Nul' : 'Défaite'}
+                      className={`w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center text-[8px] md:text-[10px] font-bold text-white ${
+                        res === 'W' ? 'bg-green-500' : res === 'D' ? 'bg-gray-400' : 'bg-red-500'
+                      }`}
+                    >
+                      {res === 'W' ? 'V' : res === 'D' ? 'N' : 'D'}
+                    </span>
+                  ))}
+                  {(!row.form || row.form.length === 0) && <span className="text-xs text-muted-foreground">-</span>}
+                </div>
+              </td>
               <td className="py-2 text-center font-bold text-primary">{row.points}</td>
             </tr>
           ))}

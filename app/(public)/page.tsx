@@ -18,6 +18,7 @@ export default async function Home() {
   const standings = calculateStandings(clubs, matches).slice(0, 5); // Mini standings
   
   // Find the next upcoming match and the last finished match
+  const liveMatches = matches.filter(m => m.status === 'LIVE');
   const upcomingMatches = matches.filter(m => m.status === 'UPCOMING').sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const finishedMatches = matches.filter(m => m.status === 'FINISHED').sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   
@@ -46,6 +47,40 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Live Matches Banner */}
+      {liveMatches.length > 0 && (
+        <section className="bg-red-600 outline outline-4 outline-red-600/30 text-white py-4 px-4 sticky top-16 z-40 relative overflow-hidden shadow-lg animate-in slide-in-from-top-2">
+          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
+          <div className="container mx-auto relative flex flex-col md:flex-row items-center gap-4 justify-center md:justify-between">
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="relative flex h-4 w-4">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-white"></span>
+              </span>
+              <h2 className="font-heading font-bold text-xl uppercase tracking-widest text-white m-0 leading-none">
+                En direct
+              </h2>
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto snap-x hide-scrollbar max-w-full pb-2 md:pb-0">
+              {liveMatches.map(match => {
+                const home = clubs.find(c => c.id === match.homeTeamId);
+                const away = clubs.find(c => c.id === match.awayTeamId);
+                return (
+                  <Link key={match.id} href="/calendrier" className="flex items-center gap-4 bg-black/20 hover:bg-black/30 transition-colors rounded-lg px-4 py-2 shrink-0 snap-center min-w-[280px]">
+                    <span className="font-bold truncate text-right flex-1">{home?.name}</span>
+                    <div className="bg-white text-red-600 px-3 py-1 rounded font-heading font-bold text-lg leading-none pt-2 shadow-sm min-w-[3rem] text-center shrink-0">
+                      {match.homeScore ?? 0} - {match.awayScore ?? 0}
+                    </div>
+                    <span className="font-bold truncate text-left flex-1">{away?.name}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Highlight Match & Mini Standings */}
       <section className="py-16 px-4 bg-background">
@@ -177,7 +212,7 @@ export default async function Home() {
                   <p className="text-muted-foreground text-sm line-clamp-3 mb-6 flex-1">
                     {article.content}
                   </p>
-                  <Link href={`/actualites#${article.id}`} className="text-primary font-bold text-sm tracking-wide uppercase inline-flex items-center gap-1 hover:underline">
+                  <Link href={`/actualites/${article.id}`} className="text-primary font-bold text-sm tracking-wide uppercase inline-flex items-center gap-1 hover:underline">
                     Lire la suite <ArrowRight className="w-4 h-4" />
                   </Link>
                 </CardContent>

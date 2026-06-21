@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Oswald } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -52,10 +53,19 @@ export default function RootLayout({
     <html
       lang="fr"
       className={`${inter.variable} ${oswald.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-background text-foreground tracking-normal">
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+

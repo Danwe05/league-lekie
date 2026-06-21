@@ -121,6 +121,26 @@ CREATE POLICY "goals_all_authenticated" ON goals FOR ALL
   WITH CHECK ((SELECT auth.uid()) IS NOT NULL);
 
 -- =================================================================
+-- MATCH_EVENTS (Timeline avancée : cartons, remplacements)
+-- =================================================================
+CREATE TABLE match_events (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  match_id   UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+  player_id  UUID NOT NULL REFERENCES players(id) ON DELETE CASCADE,
+  club_id    UUID NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  type       TEXT NOT NULL CHECK (type IN ('YELLOW_CARD', 'RED_CARD', 'SUB_IN', 'SUB_OUT', 'ASSIST', 'MOTM')),
+  minute     INT CHECK (minute >= 1 AND minute <= 120),
+  season     TEXT NOT NULL DEFAULT '2024-2025',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE match_events ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "match_events_select_public" ON match_events FOR SELECT USING (true);
+CREATE POLICY "match_events_all_authenticated" ON match_events FOR ALL
+  USING ((SELECT auth.uid()) IS NOT NULL)
+  WITH CHECK ((SELECT auth.uid()) IS NOT NULL);
+
+-- =================================================================
 -- DONNÉES D'EXEMPLE (seed)
 -- =================================================================
 

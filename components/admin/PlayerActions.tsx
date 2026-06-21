@@ -124,10 +124,22 @@ export function PlayerFormDialog({ player, clubs }: PlayerFormDialogProps) {
             </Select>
           </div>
 
-          {/* Photo URL */}
-          <div className="space-y-1.5">
-            <Label htmlFor="pphoto">URL photo (optionnel)</Label>
-            <Input id="pphoto" name="photo_url" defaultValue={player?.photoUrl ?? ''} placeholder="https://…" />
+          {/* Photo URL ou Fichier */}
+          <div className="space-y-1.5 pt-2">
+            <Label>Photo du joueur (optionnel)</Label>
+            {player?.photoUrl && (
+              <div className="flex items-center gap-4 mb-2 p-2 border border-border rounded-lg bg-muted/50">
+                <img src={player.photoUrl} alt="Preview" className="w-12 h-12 rounded object-cover" />
+                <span className="text-xs text-muted-foreground truncate">Photo actuelle</span>
+              </div>
+            )}
+            <div className="grid grid-cols-1 gap-2">
+              <Input id="pphoto_file" name="photo_file" type="file" accept="image/*" className="text-xs file:bg-primary file:text-primary-foreground file:border-0 file:mr-2 file:px-2 file:py-1 file:rounded cursor-pointer" />
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground whitespace-nowrap">Ou par URL :</span>
+                <Input id="pphoto" name="photo_url" defaultValue={player?.photoUrl ?? ''} placeholder="https://…" className="h-8 text-xs" />
+              </div>
+            </div>
           </div>
 
           {/* Season */}

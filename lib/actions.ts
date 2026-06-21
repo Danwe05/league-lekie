@@ -205,14 +205,36 @@ export async function deleteActualite(id: string) {
 
 // ─── PLAYERS ──────────────────────────────────────────────────────
 
+async function uploadPlayerPhoto(supabase: any, file: File | null): Promise<string | null> {
+  if (!file || file.size === 0) return null;
+  const ext = file.name.split('.').pop() || 'png';
+  const fileName = `players/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+  
+  const { error } = await supabase.storage.from('logos').upload(fileName, file);
+  if (error) {
+    console.error('Error uploading photo:', error);
+    return null;
+  }
+  const { data } = supabase.storage.from('logos').getPublicUrl(fileName);
+  return data.publicUrl;
+}
+
 export async function createPlayer(formData: FormData) {
   const supabase = await createClient()
+
+  let photoUrl = formData.get('photo_url') as string || null;
+  const photoFile = formData.get('photo_file') as File | null;
+  if (photoFile && photoFile.size > 0) {
+    const uploadedUrl = await uploadPlayerPhoto(supabase, photoFile);
+    if (uploadedUrl) photoUrl = uploadedUrl;
+  }
+
   const { error } = await supabase.from('players').insert({
     club_id: formData.get('club_id') as string,
     name: formData.get('name') as string,
     position: formData.get('position') as string,
     number: Number(formData.get('number')),
-    photo_url: formData.get('photo_url') as string || null,
+    photo_url: photoUrl,
     season: (formData.get('season') as string) || '2024-2025',
   })
   if (error) return { error: error.message }
@@ -222,14 +244,31 @@ export async function createPlayer(formData: FormData) {
 
 export async function updatePlayer(id: string, formData: FormData) {
   const supabase = await createClient()
-  const { error } = await supabase.from('players').update({
+
+  let photoUrl = formData.get('photo_url') as string || null;
+  const photoFile = formData.get('photo_file') as File | null;
+  if (photoFile && photoFile.size > 0) {
+    const uploadedUrl = await uploadPlayerPhoto(supabase, photoFile);
+    if (uploadedUrl) photoUrl = uploadedUrl;
+  }
+
+  const updateData: any = {
     club_id: formData.get('club_id') as string,
     name: formData.get('name') as string,
     position: formData.get('position') as string,
     number: Number(formData.get('number')),
-    photo_url: formData.get('photo_url') as string || null,
     season: (formData.get('season') as string) || '2024-2025',
-  }).eq('id', id)
+  };
+
+  // Prevent erasing the old photo if neither a new file nor an explicit URL string was submitted
+  if (photoUrl) {
+    updateData.photo_url = photoUrl;
+  } else if (formData.has('photo_url') && formData.get('photo_url') === '') {
+    // Allows explicitly clearing the photo if the user cleared the text input
+    updateData.photo_url = null;
+  }
+
+  const { error } = await supabase.from('players').update(updateData).eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/admin/joueurs')
   revalidatePath('/clubs')
@@ -267,4 +306,31 @@ export async function deleteGoal(id: string) {
   revalidatePath('/admin/matchs')
   revalidatePath('/classement')
   revalidatePath('/')
+}
+
+// ─── MATCH EVENTS ──────────────────────────────────────────────────
+
+export async function createMatchEvent(formData: FormData) {
+  const supabase = await createClient()
+  const { error } = await supabase.from('match_events').insert({
+    match_id: formData.get('match_id') as string,
+    player_id: formData.get('player_id') as string,
+    club_id: formData.get('club_id') as string,
+    type: formData.get('type') as string,
+    minute: formData.get('minute') ? Number(formData.get('minute')) : null,
+    season: (formData.get('season') as string) || '2024-2025',
+  })
+  if (error) return { error: error.message }
+  revalidatePath('/admin/matchs')
+  revalidatePath('/')
+  revalidatePath('/calendrier')
+}
+
+export async function deleteMatchEvent(id: string) {
+  const supabase = await createClient()
+  const { error } = await supabase.from('match_events').delete().eq('id', id)
+  if (error) return { error: error.message }
+  revalidatePath('/admin/matchs')
+  revalidatePath('/')
+  revalidatePath('/calendrier')
 }

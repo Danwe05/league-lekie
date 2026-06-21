@@ -1,6 +1,7 @@
 import { getActualites } from '@/lib/api'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { ActualiteFormDialog, DeleteActualiteButton } from '@/components/admin/ActualiteActions'
+import { ImageIcon } from 'lucide-react'
 
 export default async function AdminActualitesPage() {
   const actualites = await getActualites()
@@ -20,6 +21,7 @@ export default async function AdminActualitesPage() {
           <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="w-32">Date</TableHead>
+              <TableHead className="w-24">Image</TableHead>
               <TableHead>Titre</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -29,6 +31,15 @@ export default async function AdminActualitesPage() {
               <TableRow key={actu.id}>
                 <TableCell className="whitespace-nowrap text-muted-foreground">
                   {new Date(actu.date).toLocaleDateString('fr-FR')}
+                </TableCell>
+                <TableCell>
+                  {actu.imageUrl ? (
+                    <img src={actu.imageUrl} alt="Cover" className="w-16 h-10 object-cover rounded border border-border" />
+                  ) : (
+                    <div className="w-16 h-10 rounded bg-muted flex items-center justify-center border border-border">
+                      <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell>
                   <p className="font-bold line-clamp-1">{actu.title}</p>
@@ -42,7 +53,7 @@ export default async function AdminActualitesPage() {
             ))}
             {actualites.length === 0 && (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-10 text-muted-foreground">
+                <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">
                   Aucune actualité. Publiez votre premier communiqué.
                 </TableCell>
               </TableRow>

@@ -44,7 +44,7 @@ export default async function AdminMatchesPage() {
               <TableHead className="text-center">Score</TableHead>
               <TableHead>Statut</TableHead>
               <TableHead>Live</TableHead>
-              <TableHead>Buteurs</TableHead>
+              <TableHead>Événements</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -77,7 +77,7 @@ export default async function AdminMatchesPage() {
                   <TableCell>
                     <AddGoalDialog match={match} players={players} clubs={clubs} />
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
+                  <TableCell className="text-right space-x-1">
                     <MatchFormDialog match={match} clubs={clubs} />
                     <DeleteMatchButton id={match.id} />
                   </TableCell>

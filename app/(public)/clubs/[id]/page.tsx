@@ -1,10 +1,11 @@
 import { getClubs, getMatches, getPlayersByClub } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { MatchRow } from "@/components/MatchRow";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 const POSITION_STYLES: Record<string, string> = {
   Gardien: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -56,11 +57,9 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="container mx-auto px-4 py-12 flex-1">
-      <Link href="/clubs" className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary mb-8 transition-colors">
-        <ArrowLeft className="w-4 h-4" /> Retour aux clubs
-      </Link>
+      <Breadcrumbs items={[{ label: 'Clubs', href: '/clubs' }, { label: club.name }]} />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mt-4">
         {/* Main Info */}
         <div className="md:col-span-1 space-y-6">
           <div className="h-48 w-full bg-muted border border-border rounded-xl flex items-center justify-center p-6 relative overflow-hidden">
@@ -109,7 +108,10 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ id:
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {gp.map(player => (
-                        <div key={player.id} className="flex items-center gap-3 p-3 border border-border rounded-lg bg-card hover:border-primary/30 transition-colors">
+                        <Link key={player.id} href={`/joueurs/${player.id}`} className="group relative flex items-center gap-3 p-3 border border-border rounded-lg bg-card hover:border-primary/30 transition-colors">
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <ExternalLink className="w-3 h-3 text-primary" />
+                          </div>
                           <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center shrink-0 overflow-hidden">
                             {player.photoUrl ? (
                               <img src={player.photoUrl} alt={player.name} className="w-full h-full object-cover" />
@@ -119,9 +121,16 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ id:
                           </div>
                           <div className="flex flex-col min-w-0 flex-1">
                             <span className="font-bold text-sm text-foreground truncate">{player.name}</span>
-                            <span className="text-xs text-muted-foreground font-heading">#{player.number}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-muted-foreground font-heading">#{player.number}</span>
+                              {player.goals ? (
+                                <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20">
+                                  {player.goals} {player.goals > 1 ? 'buts' : 'but'}
+                                </Badge>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>

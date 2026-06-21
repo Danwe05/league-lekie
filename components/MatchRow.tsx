@@ -1,6 +1,7 @@
 import { Club, Match } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface MatchRowProps {
   match: Match;
@@ -28,7 +29,7 @@ export function MatchRow({ match, homeTeam, awayTeam, isCompact = false }: Match
   const statusConfig = statusMap[match.status];
 
   return (
-    <div className={cn("flex flex-col md:flex-row items-center border border-border bg-card rounded-xl p-4 transition-colors hover:border-primary/30", isCompact && "p-3")}>
+    <Link href={`/matchs/${match.id}`} className={cn("block flex flex-col md:flex-row items-center border border-border bg-card rounded-xl p-4 transition-all hover:border-primary/50 hover:shadow-sm cursor-pointer", isCompact && "p-3")}>
       <div className="flex flex-col items-center justify-center md:min-w-[100px] mb-4 md:mb-0 md:mr-6">
         <Badge variant="outline" className={cn("font-medium gap-1.5", statusConfig.className)}>
           {statusConfig.dot && (
@@ -84,6 +85,6 @@ export function MatchRow({ match, homeTeam, awayTeam, isCompact = false }: Match
       <div className="w-full text-center mt-3 md:hidden">
         <span className="text-xs font-medium text-muted-foreground">{formattedDate}</span>
       </div>
-    </div>
+    </Link>
   );
 }

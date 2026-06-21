@@ -18,6 +18,7 @@ export interface Player {
   number: number;
   photoUrl?: string;
   season: string;
+  goals?: number;
 }
 
 export interface Match {
@@ -30,6 +31,8 @@ export interface Match {
   matchday: number;
   status: MatchStatus;
   season: string;
+  goals?: (Goal & { playerName: string })[];
+  events?: (MatchEvent & { playerName: string })[];
 }
 
 export interface Goal {
@@ -37,6 +40,18 @@ export interface Goal {
   matchId: string;
   playerId: string;
   clubId: string;
+  minute?: number;
+  season: string;
+}
+
+export type MatchEventType = 'YELLOW_CARD' | 'RED_CARD' | 'SUB_IN' | 'SUB_OUT' | 'ASSIST' | 'MOTM';
+
+export interface MatchEvent {
+  id: string;
+  matchId: string;
+  playerId: string;
+  clubId: string;
+  type: MatchEventType;
   minute?: number;
   season: string;
 }
@@ -70,4 +85,5 @@ export interface StandingRow {
   goalsAgainst: number;
   goalDifference: number;
   points: number;
+  form?: ('W' | 'D' | 'L')[];
 }

@@ -8,13 +8,16 @@ export async function getClubs(): Promise<Club[]> {
   return data as Club[];
 }
 
-// ─── MATCHES ──────────────────────────────────────────────────────
 export async function getMatches(season?: string): Promise<Match[]> {
-  let query = supabase.from('matches').select('*').order('date', { ascending: true });
+  let query = supabase
+    .from('matches')
+    .select('*, goals(*, players(name)), match_events(*, players(name))')
+    .order('date', { ascending: true });
   if (season) query = query.eq('season', season);
   const { data, error } = await query;
   if (error) { console.error('Error fetching matches:', error); return []; }
-  return data.map(m => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((m: any) => ({
     id: m.id,
     homeTeamId: m.home_team_id,
     awayTeamId: m.away_team_id,
@@ -24,6 +27,30 @@ export async function getMatches(season?: string): Promise<Match[]> {
     matchday: m.matchday,
     status: m.status,
     season: m.season ?? '2024-2025',
+    // Map goals
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    goals: (m.goals || []).map((g: any) => ({
+      id: g.id,
+      matchId: g.match_id,
+      playerId: g.player_id,
+      clubId: g.club_id,
+      minute: g.minute,
+      season: g.season,
+      playerName: g.players?.name ?? 'Inconnu',
+      clubName: g.clubs?.name ?? '',
+    })),
+    // Map events
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    events: (m.match_events || []).map((e: any) => ({
+      id: e.id,
+      matchId: e.match_id,
+      playerId: e.player_id,
+      clubId: e.club_id,
+      type: e.type,
+      minute: e.minute,
+      season: e.season,
+      playerName: e.players?.name ?? 'Inconnu',
+    })),
   }));
 }
 
@@ -71,7 +98,7 @@ export async function getGoalsByMatch(matchId: string): Promise<(Goal & { player
 
 // ─── PLAYERS ──────────────────────────────────────────────────────
 export async function getPlayersByClub(clubId: string, season?: string): Promise<Player[]> {
-  let query = supabase.from('players').select('*').eq('club_id', clubId).order('number');
+  let query = supabase.from('players').select('*, goals(count)').eq('club_id', clubId).order('number');
   if (season) query = query.eq('season', season);
   const { data, error } = await query;
   if (error) { console.error('Error fetching players:', error); return []; }
@@ -83,6 +110,8 @@ export async function getPlayersByClub(clubId: string, season?: string): Promise
     number: p.number,
     photoUrl: p.photo_url,
     season: p.season,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    goals: (p.goals as any)?.[0]?.count ?? 0,
   }));
 }
 
