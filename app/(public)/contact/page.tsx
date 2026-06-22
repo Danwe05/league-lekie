@@ -40,7 +40,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-foreground mb-1 text-lg font-heading tracking-tight">Téléphone</h3>
-                  <p className="text-muted-foreground font-medium">+237 600 000 000</p>
+                  <p className="text-muted-foreground font-medium">+237 696 66 51 90</p>
                 </div>
               </div>
             </CardContent>
