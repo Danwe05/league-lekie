@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/classement", label: "Classement" },
   { href: "/clubs",      label: "Clubs" },
   { href: "/actualites", label: "Actualités" },
+  { href: "/bureau",     label: "Bureau" },
   { href: "/a-propos",   label: "La Ligue" },
   { href: "/contact",    label: "Contact" },
 ];

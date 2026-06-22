@@ -87,17 +87,17 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ id:
                       const role = typeof o === 'string' ? null : o.role;
                       const photoUrl = typeof o === 'string' ? null : o.photoUrl;
                       return (
-                        <div key={idx} className="flex items-center gap-3 w-full max-w-[250px] p-2 bg-muted/30 border border-border rounded-lg">
+                        <div key={idx} className="flex items-center gap-4 w-full max-w-sm p-4 bg-card border border-border rounded-2xl shadow-sm hover:shadow-md transition-shadow">
                           {photoUrl ? (
-                            <img src={photoUrl} alt={name} className="w-10 h-10 rounded-full object-cover border border-border" />
+                            <img src={photoUrl} alt={name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-primary/20 shrink-0" />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center">
-                              <span className="text-xs font-bold text-muted-foreground">{name.substring(0, 2).toUpperCase()}</span>
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-muted border-2 border-border flex items-center justify-center shrink-0">
+                              <span className="text-lg font-bold text-muted-foreground">{name.substring(0, 2).toUpperCase()}</span>
                             </div>
                           )}
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-sm font-bold text-foreground truncate">{name}</span>
-                            {role && <span className="text-xs text-muted-foreground truncate">{role}</span>}
+                          <div className="flex flex-col min-w-0 flex-1">
+                            <span className="text-base sm:text-lg font-bold text-foreground line-clamp-1">{name}</span>
+                            {role && <span className="text-sm font-semibold text-primary/80 uppercase tracking-wider line-clamp-1">{role}</span>}
                           </div>
                         </div>
                       )

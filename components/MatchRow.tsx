@@ -42,47 +42,48 @@ export function MatchRow({ match, homeTeam, awayTeam, isCompact = false }: Match
         </span>
       </div>
 
+      {/* Container for Teams and Score */}
       <div className="flex-1 flex items-center justify-between w-full">
         {/* Home */}
-        <div className="flex-1 flex items-center justify-end gap-3 text-right">
-          <span className="font-heading font-bold text-lg md:text-xl truncate">{homeTeam.name}</span>
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row items-center justify-start md:justify-end gap-1.5 md:gap-4 md:text-right overflow-hidden">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border overflow-hidden md:order-last">
             {homeTeam.logo ? (
               <img src={homeTeam.logo} alt={homeTeam.name} className="w-full h-full object-cover" />
             ) : (
               <span className="text-xs font-bold text-muted-foreground">{homeTeam.name.substring(0, 2).toUpperCase()}</span>
             )}
           </div>
+          <span className="font-heading font-bold text-xs md:text-xl text-center md:text-right leading-tight max-w-full md:max-w-none line-clamp-2 md:truncate">{homeTeam.name}</span>
         </div>
 
         {/* Score */}
-        <div className="px-4 flex items-center justify-center min-w-[80px]">
+        <div className="px-2 md:px-6 flex items-center justify-center min-w-[70px] md:min-w-[100px] shrink-0">
           {match.status === 'UPCOMING' ? (
-             <span className="text-sm font-bold text-muted-foreground bg-muted px-3 py-1 rounded-md">Vs</span>
+            <span className="text-xs md:text-sm font-bold text-muted-foreground bg-muted/50 px-3 md:px-4 py-1 md:py-1.5 rounded-md">Vs</span>
           ) : (
-            <div className="flex items-center gap-2 font-heading font-bold text-2xl text-foreground">
-              <span>{match.homeScore}</span>
-              <span className="text-muted-foreground">-</span>
-              <span>{match.awayScore}</span>
+            <div className="flex items-center gap-1.5 md:gap-3 font-heading font-bold text-2xl md:text-3xl text-foreground">
+              <span className="tabular-nums">{match.homeScore}</span>
+              <span className="text-muted-foreground/30 text-lg md:text-xl">-</span>
+              <span className="tabular-nums">{match.awayScore}</span>
             </div>
           )}
         </div>
 
         {/* Away */}
-        <div className="flex-1 flex items-center justify-start gap-3">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row items-center justify-start gap-1.5 md:gap-4 md:text-left overflow-hidden">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border overflow-hidden">
             {awayTeam.logo ? (
               <img src={awayTeam.logo} alt={awayTeam.name} className="w-full h-full object-cover" />
             ) : (
               <span className="text-xs font-bold text-muted-foreground">{awayTeam.name.substring(0, 2).toUpperCase()}</span>
             )}
           </div>
-          <span className="font-heading font-bold text-lg md:text-xl truncate">{awayTeam.name}</span>
+          <span className="font-heading font-bold text-xs md:text-xl text-center md:text-left leading-tight max-w-full md:max-w-none line-clamp-2 md:truncate">{awayTeam.name}</span>
         </div>
       </div>
       
       {/* Mobile Date */}
-      <div className="w-full text-center mt-3 md:hidden">
+      <div className="w-full text-center mt-3 pt-3 border-t border-border/50 md:hidden">
         <span className="text-xs font-medium text-muted-foreground">{formattedDate}</span>
       </div>
     </Link>

@@ -22,6 +22,7 @@ export function Footer() {
           <h4 className="font-bold text-sm mb-4">Administration</h4>
           <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
             <li><Link href="/actualites" className="hover:text-primary">Actualités</Link></li>
+            <li><Link href="/bureau" className="hover:text-primary">Bureau Exécutif</Link></li>
             <li><Link href="/a-propos" className="hover:text-primary">Règlement intérieur</Link></li>
             <li><Link href="/contact" className="hover:text-primary">Nous contacter</Link></li>
           </ul>
@@ -31,6 +32,7 @@ export function Footer() {
           <address className="text-sm text-muted-foreground not-italic flex flex-col gap-2">
             <p>Stade Municipal - Obala</p>
             <p>BP 123, Obala, Cameroun</p>
+            <p>Tel: +237 696 66 51 90</p>
             <p>contact@liguelekie.cm</p>
           </address>
         </div>
