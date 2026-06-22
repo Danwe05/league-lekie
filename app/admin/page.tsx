@@ -4,6 +4,8 @@ import { Users, CalendarDays, Newspaper, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { MatchRow } from '@/components/MatchRow';
 
+import { calculateStandings } from '@/lib/utils/standings';
+
 export default async function AdminDashboardPage() {
   const [clubs, matches, actualites] = await Promise.all([
     getClubs(),
@@ -12,6 +14,11 @@ export default async function AdminDashboardPage() {
   ]);
 
   const upcomingMatches = matches.filter(m => m.status === 'UPCOMING');
+  
+  // Computed Stats
+  const totalGoals = matches.reduce((acc, m) => acc + (m.homeScore || 0) + (m.awayScore || 0), 0);
+  const standings = calculateStandings(clubs, matches);
+  const leadingClub = standings.length > 0 ? standings[0] : null;
 
   return (
     <div className="space-y-8">
@@ -33,32 +40,53 @@ export default async function AdminDashboardPage() {
         </Card>
         <Card className="shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Matchs Programmés</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Matchs Effectués</CardTitle>
             <CalendarDays className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{matches.length}</div>
+            <div className="text-2xl font-bold">{matches.filter(m => m.status === 'FINISHED').length}</div>
           </CardContent>
         </Card>
         <Card className="shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Matchs à venir</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Buts Marqués</CardTitle>
             <Activity className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{upcomingMatches.length}</div>
+            <div className="text-2xl font-bold text-primary">{totalGoals}</div>
           </CardContent>
         </Card>
         <Card className="shadow-none">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Actualités</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Leader actuel</CardTitle>
             <Newspaper className="w-4 h-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{actualites.length}</div>
+            <div className="text-2xl font-bold truncate">
+              {leadingClub ? leadingClub.clubName : '-'}
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Quick Actions / Export */}
+      <Card className="shadow-none border-border bg-muted/20">
+        <CardContent className="p-4 flex items-center gap-4 flex-wrap">
+          <span className="text-sm font-bold text-muted-foreground mr-2">Exports :</span>
+          <a
+            href="/admin/export?type=standings"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-md text-sm font-bold shadow-sm hover:bg-muted transition-colors"
+          >
+            Télécharger Classement (CSV)
+          </a>
+          <a
+            href="/admin/export?type=scorers"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-md text-sm font-bold shadow-sm hover:bg-muted transition-colors"
+          >
+            Télécharger Buteurs (CSV)
+          </a>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card className="shadow-none border-border">

@@ -37,20 +37,20 @@ export default async function ButeursPage({
           Aucun buteur enregistré pour cette saison.
         </p>
       ) : (
-        <div className="border border-border rounded-xl bg-card overflow-hidden">
+        <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden mt-4">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-muted/50 text-left text-muted-foreground font-medium">
-                <th className="px-4 py-3 w-12 text-center">Rang</th>
-                <th className="px-4 py-3">Joueur</th>
-                <th className="px-4 py-3">Club</th>
-                <th className="px-4 py-3 text-center w-20">Buts</th>
+              <tr className="border-b border-border text-muted-foreground text-left">
+                <th className="py-3.5 pl-5 w-16 text-center font-medium text-xs uppercase tracking-wide">Rang</th>
+                <th className="py-3.5 font-medium text-xs uppercase tracking-wide">Joueur</th>
+                <th className="py-3.5 font-medium text-xs uppercase tracking-wide">Club</th>
+                <th className="py-3.5 pr-5 text-center w-24 font-medium text-xs uppercase tracking-wide">Buts</th>
               </tr>
             </thead>
             <tbody>
               {topScorers.map((scorer, idx) => (
-                <tr key={scorer.playerId} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3 text-center">
+                <tr key={scorer.playerId} className={`border-b border-border/60 last:border-0 hover:bg-muted/40 transition-colors duration-200 ${idx < 3 ? 'bg-primary/[0.04]' : ''}`}>
+                  <td className="py-3.5 pl-5 text-center font-medium text-muted-foreground tabular-nums">
                     {idx === 0 ? (
                       <Medal className="w-5 h-5 text-yellow-500 mx-auto" />
                     ) : idx === 1 ? (
@@ -58,17 +58,26 @@ export default async function ButeursPage({
                     ) : idx === 2 ? (
                       <Medal className="w-5 h-5 text-amber-600 mx-auto" />
                     ) : (
-                      <span className="font-bold text-muted-foreground">{idx + 1}</span>
+                      idx + 1
                     )}
                   </td>
-                  <td className="py-4 font-bold text-base">
-                  <Link href={`/joueurs/${scorer.playerId}`} className="hover:text-primary hover:underline transition-colors">
-                    {scorer.playerName}
-                  </Link>
-                </td>
-                  <td className="px-4 py-3 text-muted-foreground">{scorer.clubName}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="font-heading font-bold text-2xl text-primary">{scorer.goals}</span>
+                  <td className="py-3.5 font-semibold text-base text-foreground">
+                    <Link href={`/joueurs/${scorer.playerId}`} className="flex items-center gap-3 hover:text-primary transition-colors group">
+                      <div className="w-10 h-10 rounded-full bg-muted border-2 border-border flex items-center justify-center overflow-hidden shrink-0 group-hover:border-primary/40 transition-colors">
+                        {scorer.photoUrl ? (
+                          <img src={scorer.photoUrl} alt={scorer.playerName} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-xs font-bold text-muted-foreground">
+                            {scorer.playerName.substring(0, 2).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <span className="group-hover:underline">{scorer.playerName}</span>
+                    </Link>
+                  </td>
+                  <td className="py-3.5 text-muted-foreground">{scorer.clubName}</td>
+                  <td className="py-3.5 pr-5 text-center">
+                    <span className="font-heading font-bold text-2xl text-primary tabular-nums">{scorer.goals}</span>
                   </td>
                 </tr>
               ))}

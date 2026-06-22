@@ -138,7 +138,7 @@ export async function getAllPlayers(season?: string): Promise<Player[]> {
 export async function getTopScorers(season?: string): Promise<TopScorer[]> {
   let query = supabase
     .from('goals')
-    .select('player_id, season, players(name, club_id, clubs(name))')
+    .select('player_id, season, players(name, club_id, photo_url, clubs(name))')
     .order('player_id');
   if (season) query = query.eq('season', season);
   const { data, error } = await query;
@@ -161,6 +161,7 @@ export async function getTopScorers(season?: string): Promise<TopScorer[]> {
         clubName: player.clubs?.name ?? '?',
         goals: 1,
         season: g.season,
+        photoUrl: player.photo_url ?? undefined,
       });
     }
   }

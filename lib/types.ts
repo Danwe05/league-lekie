@@ -1,9 +1,15 @@
+export interface Official {
+  name: string;
+  role?: string;
+  photoUrl?: string;
+}
+
 export interface Club {
   id: string;
   name: string;
   logo: string;
   stadium: string;
-  officials: string[];
+  officials: Official[];
 }
 
 export type MatchStatus = 'UPCOMING' | 'LIVE' | 'FINISHED';
@@ -63,6 +69,7 @@ export interface TopScorer {
   clubName: string;
   goals: number;
   season: string;
+  photoUrl?: string;
 }
 
 export interface Actualite {

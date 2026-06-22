@@ -41,7 +41,24 @@ export default async function AdminClubsPage() {
                 </TableCell>
                 <TableCell className="font-bold">{club.name}</TableCell>
                 <TableCell>{club.stadium || <span className="text-muted-foreground">—</span>}</TableCell>
-                <TableCell>{club.officials?.length ?? 0}</TableCell>
+                <TableCell>
+                  {club.officials?.length ? (
+                    <div className="flex flex-wrap gap-1">
+                      {club.officials.map((o: any, i) => {
+                        const name = typeof o === 'string' ? o : o.name;
+                        const photoUrl = typeof o !== 'string' ? o.photoUrl : undefined;
+                        return (
+                          <span key={i} className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground border border-border">
+                            {photoUrl && <img src={photoUrl} alt={name} className="w-4 h-4 rounded-full object-cover shrink-0" />}
+                            {name}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </TableCell>
                 <TableCell className="text-right space-x-2">
                   <ClubFormDialog club={club} />
                   <DeleteClubButton id={club.id} />

@@ -26,11 +26,13 @@ export async function logout() {
 
 export async function createClub(formData: FormData) {
   const supabase = await createClient()
+  let officials: string[] = []
+  try { officials = JSON.parse(formData.get('officials') as string || '[]') } catch { /* ignore */ }
   const { error } = await supabase.from('clubs').insert({
     name: formData.get('name') as string,
     stadium: formData.get('stadium') as string,
     logo: formData.get('logo') as string || null,
-    officials: [],
+    officials,
   })
   if (error) return { error: error.message }
   revalidatePath('/admin/clubs')
@@ -39,10 +41,13 @@ export async function createClub(formData: FormData) {
 
 export async function updateClub(id: string, formData: FormData) {
   const supabase = await createClient()
+  let officials: string[] = []
+  try { officials = JSON.parse(formData.get('officials') as string || '[]') } catch { /* ignore */ }
   const { error } = await supabase.from('clubs').update({
     name: formData.get('name') as string,
     stadium: formData.get('stadium') as string,
     logo: formData.get('logo') as string || null,
+    officials,
   }).eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/admin/clubs')

@@ -80,11 +80,28 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ id:
 
               {club.officials.length > 0 && (
                 <div>
-                  <span className="text-muted-foreground font-medium block mb-1">Direction</span>
-                  <div className="flex flex-col gap-1 items-start">
-                    {club.officials.map((o, idx) => (
-                      <Badge key={idx} variant="secondary" className="w-max font-medium">{o}</Badge>
-                    ))}
+                  <span className="text-muted-foreground font-medium block mb-3">Direction</span>
+                  <div className="flex flex-col gap-3 items-start">
+                    {club.officials.map((o: any, idx) => {
+                      const name = typeof o === 'string' ? o : o.name;
+                      const role = typeof o === 'string' ? null : o.role;
+                      const photoUrl = typeof o === 'string' ? null : o.photoUrl;
+                      return (
+                        <div key={idx} className="flex items-center gap-3 w-full max-w-[250px] p-2 bg-muted/30 border border-border rounded-lg">
+                          {photoUrl ? (
+                            <img src={photoUrl} alt={name} className="w-10 h-10 rounded-full object-cover border border-border" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center">
+                              <span className="text-xs font-bold text-muted-foreground">{name.substring(0, 2).toUpperCase()}</span>
+                            </div>
+                          )}
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-sm font-bold text-foreground truncate">{name}</span>
+                            {role && <span className="text-xs text-muted-foreground truncate">{role}</span>}
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )}
